@@ -19,6 +19,50 @@ package main
 Программа должна проходить все тесты. Код должен проходить проверки go vet и golint.
 */
 
-func main() {
+import (
+	"fmt"
+	"sort"
+	"strings"
+)
 
+func findAnagramSets(words *[]string) *map[string][]string {
+	anagramSets := make(map[string][]string)
+
+	for _, word := range *words {
+		// Приводим слово к нижнему регистру
+		word = strings.ToLower(word)
+
+		// Создаем сортируемую версию слова
+		sortedWord := sortString(word)
+
+		// Добавляем слово в множество анаграмм
+		anagramSets[sortedWord] = append(anagramSets[sortedWord], word)
+	}
+
+	// Удаляем множества из одного элемента
+	for key, value := range anagramSets {
+		if len(value) == 1 {
+			delete(anagramSets, key)
+		}
+	}
+
+	return &anagramSets
+}
+
+// Вспомогательная функция для сортировки символов в слове
+func sortString(str string) string {
+	s := strings.Split(str, "")
+	sort.Strings(s)
+	return strings.Join(s, "")
+}
+
+func main() {
+	// Пример использования функции
+	words := []string{"пятак", "пятка", "тяпка", "листок", "слиток", "столик"}
+
+	anagramSets := findAnagramSets(&words)
+
+	for _, value := range *anagramSets {
+		fmt.Printf("Множество анаграмм для слова %s: %v\n", value[0], value)
+	}
 }
